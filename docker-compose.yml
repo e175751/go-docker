@@ -1,0 +1,28 @@
+version: '3'
+services:
+  app:
+    #app_goの中にあるDockerfileの読み込み
+    build: ./app_go
+    container_name: "app_go"
+    ports:
+     - 8001:8001
+    tty: true
+    depends_on:
+      - mysql
+    #ホストのディレクトリをコンテナにマウント
+    volumes:
+      - ./app_go/app:/go/src/app
+
+  mysql:
+      build: ./app_go/app/db
+      image: mysql:8.0.18
+      restart: always
+      environment:
+        MYSQL_USER: root
+        MYSQL_ROOT_PASSWORD: password
+        MYSQL_DATABASE: sample
+      hostname: mysql
+      ports:
+        - "3306:3306"
+      volumes:
+        - ./app_go/app/db:/var/lib/mysql
